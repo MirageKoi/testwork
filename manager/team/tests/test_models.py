@@ -17,12 +17,8 @@ class PersonModelTest(TestCase):
     """Test module for PersonModel"""
 
     def setUp(self) -> None:
-        Person.objects.create(
-            first_name="Bob", last_name="Cat", email="bobcat@gmail.com"
-        )
-        Person.objects.create(
-            first_name="Jack", last_name="Rich", email="jackrich@gmail.com"
-        )
+        Person.objects.create(first_name="Bob", last_name="Cat", email="bobcat@gmail.com")
+        Person.objects.create(first_name="Jack", last_name="Rich", email="jackrich@gmail.com")
 
     def test_person_first_and_last_names(self):
         person_1 = Person.objects.get(id=1)
