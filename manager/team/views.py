@@ -12,6 +12,7 @@ class TeamAPIView(ListCreateAPIView):
 class TeamDetailAPIView(RetrieveUpdateDestroyAPIView):
     queryset = TeamModel.objects.all()
     serializer_class = TeamSerializer
+    lookup_field = "title"
 
 
 class PersonAPIView(ListCreateAPIView):
@@ -22,3 +23,4 @@ class PersonAPIView(ListCreateAPIView):
 class PersonDetailAPIView(RetrieveUpdateDestroyAPIView):
     queryset = Person.objects.all()
     serializer_class = PersonSerializer
+    lookup_field = "slug"
