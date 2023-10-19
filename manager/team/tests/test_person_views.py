@@ -29,7 +29,7 @@ class CreateListMemberTest(APITestCase):
             "last_name": "Cat",
             "email": "@@",
         }
-        
+
         # Create some test Member instances for testing
         Member.objects.create(first_name="test1", last_name="test1", email="test1@gmail.com")
         Member.objects.create(first_name="test2", last_name="test2", email="test2@gmail.com")
@@ -75,6 +75,7 @@ class CreateListMemberTest(APITestCase):
         self.assertEqual(response.data, serializer.data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+
 # Create a test case class for retrieving, updating, and deleting single members
 class RetrieveUpdateDeleteSingleMember(APITestCase):
     """Test Module for single Member retrieving, updating, deleting"""
@@ -82,7 +83,7 @@ class RetrieveUpdateDeleteSingleMember(APITestCase):
     def setUp(self) -> None:
         # Create a test Member instance
         self.member = Member.objects.create(first_name="test1", last_name="test1", email="test1@gmail.com")
-        
+
         # Define valid and invalid payloads for member updates
         self.valid_payload = {
             "first_name": "updated test1",

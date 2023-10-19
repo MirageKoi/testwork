@@ -130,15 +130,14 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # DRF Settings
 
 REST_FRAMEWORK = {
-    
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 
 # Spectacular Settings
 
-# SPECTACULAR_SETTINGS = {
-#     "TITLE": "Your Project API",
-#     "DESCRIPTION": "Your project description",
-#     "VERSION": "1.0.0",
-#     "SERVE_INCLUDE_SCHEMA": False,
-# }
+SPECTACULAR_SETTINGS = {
+    "TITLE": "TestWork API",
+    "DESCRIPTION": "Team Builder",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
+}

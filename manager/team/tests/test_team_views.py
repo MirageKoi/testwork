@@ -7,6 +7,7 @@ from rest_framework.test import APITestCase
 from rest_framework.request import Request
 from rest_framework.test import APIRequestFactory
 
+
 # Create a test case class for listing and creating teams
 class CreateListTeamsTest(APITestCase):
     """Test Module for list create Team View"""
@@ -15,7 +16,7 @@ class CreateListTeamsTest(APITestCase):
         # Define valid and invalid payloads for team creation
         self.valid_payload = {"title": "red team"}
         self.invalid_payload = {"title": ""}
-        
+
         # Create some test Team instances for testing
         Team.objects.create(title="first team")
         Team.objects.create(title="second team")
@@ -51,6 +52,7 @@ class CreateListTeamsTest(APITestCase):
         self.assertEqual(response.data, serializer.data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+
 # Create a test case class for retrieving, updating, and deleting single teams
 class RetrieveUpdateDestroyTeamTest(APITestCase):
     """Test Module for retrieve update delete single team"""
@@ -58,7 +60,7 @@ class RetrieveUpdateDestroyTeamTest(APITestCase):
     def setUp(self) -> None:
         # Create a test Team instance
         self.first = Team.objects.create(title="first team")
-        
+
         # Define valid and invalid payloads for team updates
         self.valid_payload = {"title": "renew team name"}
         self.invalid_payload = {"title": ""}
