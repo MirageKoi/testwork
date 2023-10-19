@@ -23,7 +23,9 @@ Project where you can create and manage teams and members.
 ### Install
 
     pip install -r requirements.txt
+
     python manage.py makemigrations
+    
     python manage.py migrate
 
 ### Usage
