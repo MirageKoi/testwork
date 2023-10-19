@@ -1,29 +1,29 @@
 from django.test import TestCase
-from ..models import TeamModel, Person
+from ..models import Team, Member
 
 
 class TeamModelTest(TestCase):
-    """Test module for TeamModel"""
+    """Test module for Team"""
 
     def setUp(self) -> None:
-        TeamModel.objects.create(title="First team")
+        Team.objects.create(title="First team")
 
     def test_team_title(self):
-        team_1 = TeamModel.objects.get(title="First team")
+        team_1 = Team.objects.get(title="First team")
         self.assertEqual(team_1.title, "First team")
 
 
-class PersonModelTest(TestCase):
-    """Test module for PersonModel"""
+class MemberModelTest(TestCase):
+    """Test module for Member Model"""
 
     def setUp(self) -> None:
-        Person.objects.create(first_name="Bob", last_name="Cat", email="bobcat@gmail.com")
-        Person.objects.create(first_name="Jack", last_name="Rich", email="jackrich@gmail.com")
+        Member.objects.create(first_name="Bob", last_name="Cat", email="bobcat@gmail.com")
+        Member.objects.create(first_name="Jack", last_name="Rich", email="jackrich@gmail.com")
 
-    def test_person_first_and_last_names(self):
-        person_1 = Person.objects.get(id=1)
-        person_2 = Person.objects.get(id=2)
-        self.assertEqual((person_1.first_name), "Bob")
-        self.assertEqual((person_1.last_name), "Cat")
-        self.assertEqual((person_2.first_name), "Jack")
-        self.assertNotEqual((person_2.last_name), "Wick")
+    def test_Member_first_and_last_names(self):
+        Member_1 = Member.objects.get(id=1)
+        Member_2 = Member.objects.get(id=2)
+        self.assertEqual((Member_1.first_name), "Bob")
+        self.assertEqual((Member_1.last_name), "Cat")
+        self.assertEqual((Member_2.first_name), "Jack")
+        self.assertNotEqual((Member_2.last_name), "Wick")

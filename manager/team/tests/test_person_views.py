@@ -1,18 +1,19 @@
 import json
 from rest_framework import status
-from django.test import TestCase, Client
 from django.urls import reverse
-from ..models import Person
-from ..serializers import PersonSerializer
+from ..models import Member
+from ..serializers import MemberSerializer
+from rest_framework.test import APITestCase
+from rest_framework.request import Request
+from rest_framework.test import APIRequestFactory
 
 
-client = Client()
-
-
-class CreateListPersonTest(TestCase):
-    """Test Modulo for person creating and listing"""
+# Create a test case class for creating and listing members
+class CreateListMemberTest(APITestCase):
+    """Test Module for Member creating and listing"""
 
     def setUp(self) -> None:
+        # Define valid and invalid payloads for member creation
         self.valid_payload = {
             "first_name": "John",
             "last_name": "Wick",
@@ -24,104 +25,125 @@ class CreateListPersonTest(TestCase):
             "email": "bobrichard@gmail.com",
         }
         self.invalid_email_payload = {
-            "person_name": "Bobby",
+            "first_name": "Bobby",
             "last_name": "Cat",
             "email": "@@",
         }
-        Person.objects.create(first_name="test1", last_name="test1", email="test1@gmail.com")
-        Person.objects.create(first_name="test2", last_name="test2", email="test2@gmail.com")
+        
+        # Create some test Member instances for testing
+        Member.objects.create(first_name="test1", last_name="test1", email="test1@gmail.com")
+        Member.objects.create(first_name="test2", last_name="test2", email="test2@gmail.com")
 
-    # POST REQUEST
-    def test_create_valid_person(self):
-        response = client.post(
-            reverse("list_create_person"),
+    # POST REQUEST tests for member creation
+    def test_create_valid_member(self):
+        # Test creating a valid member
+        response = self.client.post(
+            reverse("list_member"),
             data=json.dumps(self.valid_payload),
             content_type="application/json",
         )
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-    def test_create_name_invalid_person(self):
-        response = client.post(
-            reverse("list_create_person"),
+    def test_create_name_invalid_member(self):
+        # Test creating a member with an invalid name
+        response = self.client.post(
+            reverse("list_member"),
             data=json.dumps(self.invalid_name_payload),
             content_type="application/json",
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-    def test_create_email_invalid_person(self):
-        response = client.post(
-            reverse("list_create_person"),
+    def test_create_email_invalid_member(self):
+        # Test creating a member with an invalid email
+        response = self.client.post(
+            reverse("list_member"),
             data=json.dumps(self.invalid_email_payload),
             content_type="application/json",
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-    # GET REQUEST
-    def test_list_person(self):
-        response = client.get(reverse("list_create_person"))
-        persons = Person.objects.all()
-        serializer = PersonSerializer(persons, many=True)
+    # GET REQUEST tests for listing members
+    def test_list_member(self):
+        factory = APIRequestFactory()
+        Members = Member.objects.all()
+        request = factory.get(reverse("list_member"))
+        serializer_context = {
+            "request": Request(request),
+        }
+        response = self.client.get(reverse("list_member"))
+        serializer = MemberSerializer(Members, context=serializer_context, many=True)
         self.assertEqual(response.data, serializer.data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-
-class RetriveUpdateDeleteSinglePerson(TestCase):
-    """Test Modulo for single person retriving updating deleting"""
+# Create a test case class for retrieving, updating, and deleting single members
+class RetrieveUpdateDeleteSingleMember(APITestCase):
+    """Test Module for single Member retrieving, updating, deleting"""
 
     def setUp(self) -> None:
-        self.person = Person.objects.create(first_name="test1", last_name="test1", email="test1@gmail.com")
+        # Create a test Member instance
+        self.member = Member.objects.create(first_name="test1", last_name="test1", email="test1@gmail.com")
+        
+        # Define valid and invalid payloads for member updates
         self.valid_payload = {
             "first_name": "updated test1",
             "last_name": "updated test1",
-            "email": "updatedtes1@gmail.com",
+            "email": "updatedtest1@gmail.com",
         }
         self.valid_partial_payload = {"email": "partial@gmail.com"}
         self.invalid_payload = {"email": "11"}
 
-    # GET REQUEST
-    def test_get_valid_single_person(self):
-        response = client.get(reverse("detail_update_destroy_person", kwargs={"pk": self.person.pk}))
-        person = Person.objects.get(pk=self.person.pk)
-        serializer = PersonSerializer(person)
+    # GET REQUEST tests for retrieving a single member
+    def test_get_valid_single_member(self):
+        factory = APIRequestFactory()
+        member = Member.objects.get(pk=self.member.pk)
+        request = factory.get(reverse("detail_member", kwargs={"pk": self.member.pk}))
+        serializer_context = {
+            "request": Request(request),
+        }
+        response = self.client.get(reverse("detail_member", kwargs={"pk": self.member.pk}))
+        serializer = MemberSerializer(member, context=serializer_context)
         self.assertEqual(response.data, serializer.data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    def test_get_invalid_single_person(self):
-        response = client.get(reverse("detail_update_destroy_person", kwargs={"pk": 999}))
+    def test_get_invalid_single_member(self):
+        # Test retrieving an invalid member
+        response = self.client.get(reverse("detail_member", kwargs={"pk": 999}))
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
-    # PUT REQUEST
-    def test_valid_update_person(self):
-        response = client.put(
-            reverse("detail_update_destroy_person", kwargs={"pk": self.person.pk}),
+    # PUT REQUEST test for updating a member
+    def test_valid_update_member(self):
+        response = self.client.put(
+            reverse("detail_member", kwargs={"pk": self.member.pk}),
             data=json.dumps(self.valid_payload),
             content_type="application/json",
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    # PATCH REQUEST
-    def test_valid_partial_update_person(self):
-        self.object = Person.objects.get(pk=self.person.pk)
-        response = client.patch(
-            reverse("detail_update_destroy_person", kwargs={"pk": self.person.pk}),
+    # PATCH REQUEST test for partially updating a member
+    def test_valid_partial_update_member(self):
+        self.object = Member.objects.get(pk=self.member.pk)
+        response = self.client.patch(
+            reverse("detail_member", kwargs={"pk": self.member.pk}),
             data=json.dumps(self.valid_partial_payload),
             content_type="application/json",
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    def test_invalid_update_person(self):
-        response = client.put(
-            reverse("detail_update_destroy_person", kwargs={"pk": self.person.pk}),
+    def test_invalid_update_member(self):
+        # Test updating a member with an invalid payload
+        response = self.client.put(
+            reverse("detail_member", kwargs={"pk": self.member.pk}),
             data=json.dumps(self.invalid_payload),
             content_type="application/json",
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-    # DELETE REQUEST
-    def test_valid_delete_person(self):
-        response = client.delete(reverse("detail_update_destroy_person", kwargs={"pk": self.person.pk}))
+    # DELETE REQUEST tests for deleting a member
+    def test_valid_delete_member(self):
+        response = self.client.delete(reverse("detail_member", kwargs={"pk": self.member.pk}))
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
-    def test_invalid_delete_person(self):
-        response = client.delete(reverse("detail_update_destroy_person", kwargs={"pk": 999}))
+    def test_invalid_delete_member(self):
+        # Test deleting an invalid member
+        response = self.client.delete(reverse("detail_member", kwargs={"pk": 999}))
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
